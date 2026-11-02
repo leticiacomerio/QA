@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QA Conecta</title>
+  <meta name="description" content="Painel de testes de QA do Conecta FAPES: casos, tags e fluxo de trabalho.">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            abyss: '#040A07',
+            hull: '#08120D',
+            panel: '#0D1A13',
+            wire: '#17301F',
+            mist: '#7FA592',
+            frost: '#D4F7E4',
+            scan: '#00FF9C',
+            pass: '#C6FF4D',
+            fail: '#FF4D6D',
+            hold: '#FFB547'
+          },
+          fontFamily: {
+            display: ['"Chakra Petch"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 5rem); }
+    [tabindex="-1"]:focus { outline: none; }
+    body { background-color: #040A07; }
+    body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: rgba(4, 10, 7, 0.85); }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(0, 255, 156, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 156, 0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .scanline { position: relative; overflow: hidden; }
+    .scanline::after {
+      content: ""; position: absolute; left: 0; right: 0; top: -40%; height: 40%;
+      background: linear-gradient(to bottom, transparent, rgba(0, 255, 156, 0.07), transparent);
+      animation: sweep 5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes sweep { to { top: 110%; } }
+    .cursor::after { content: "▌"; color: #00FF9C; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .clip-corner { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scanline::after, .cursor::after { animation: none; }
+    }
+  </style>
+</head>
+<body class="bg-abyss font-sans text-frost antialiased selection:bg-scan selection:text-abyss">
+  <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded focus:bg-scan focus:px-4 focus:py-2 focus:text-abyss">Pular para o conteúdo</a>
+
+  <header class="sticky z-50 border-b border-wire bg-abyss/85 backdrop-blur" style="top: env(safe-area-inset-top, 0px);">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
+      <a href="#inicio" class="flex items-center gap-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-scan" aria-label="QA Conecta, página inicial">
+        <span class="font-display text-xl font-bold tracking-wide">QA Conecta</span>
+      </a>
+      <nav aria-label="Seções principais">
+        <ul class="flex flex-wrap gap-1 font-mono text-sm">
+          <li><a href="#testes" data-nav="testes" class="block rounded px-3 py-2 text-mist hover:bg-panel hover:text-scan aria-[current=page]:bg-panel aria-[current=page]:text-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">Testes</a></li>
+          <li><a href="#tags" data-nav="tags" class="block rounded px-3 py-2 text-mist hover:bg-panel hover:text-scan aria-[current=page]:bg-panel aria-[current=page]:text-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">Tags</a></li>
+          <li><a href="#workflow" data-nav="workflow" class="block rounded px-3 py-2 text-mist hover:bg-panel hover:text-scan aria-[current=page]:bg-panel aria-[current=page]:text-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">Workflow</a></li>
+          <li><a href="#github" data-nav="github" class="block rounded px-3 py-2 text-mist hover:bg-panel hover:text-scan aria-[current=page]:bg-panel aria-[current=page]:text-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- Hero: console de reprodução -->
+    <section id="inicio" data-view="inicio" class="grid-bg border-b border-wire" aria-labelledby="titulo-hero">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 md:grid-cols-[1.1fr_1fr] md:py-24">
+        <div>
+          <h1 id="titulo-hero" class="font-display text-4xl font-bold leading-tight sm:text-5xl">Documentação de Garantia da Qualidade (QA)</h1>
+          <p class="mt-5 max-w-xl text-lg leading-relaxed text-mist">Orientação para testes no Conecta.</p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#testes" class="clip-corner bg-scan px-5 py-3 font-display font-semibold text-abyss hover:bg-frost focus:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-abyss">Ver testes</a>
+            <a href="#workflow" class="rounded border border-wire px-5 py-3 font-display font-semibold text-frost hover:border-scan hover:text-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">Como funciona</a>
+          </div>
+        </div>
+
+        <figure class="scanline rounded-lg border border-wire bg-hull shadow-[0_0_40px_-12px_rgba(56,225,255,0.35)]">
+          <div class="flex items-center gap-2 border-b border-wire px-4 py-3" aria-hidden="true">
+            <span class="h-3 w-3 rounded-full bg-fail/80"></span>
+            <span class="h-3 w-3 rounded-full bg-hold/80"></span>
+            <span class="h-3 w-3 rounded-full bg-pass/80"></span>
+            <span class="ml-3 font-mono text-xs text-mist">qa reproduce · homologação</span>
+          </div>
+          <pre class="overflow-x-auto p-5 font-mono text-[13px] leading-7"><code><span class="text-mist">$</span> npx qa smoke
+<span class="text-pass">✓</span> coordenador  sessão válida
+<span class="text-pass">✓</span> analista     sessão válida
+<span class="text-mist">$</span> reproduce CT-691 --times 2
+  PUT /classificar  <span class="text-fail">422</span>
+  toast: "Não foi possível salvar a passagem"
+<span class="text-fail">BUG 2/2</span>  evidence/CT-691/
+<span class="text-mist">$</span> reproduce CT-730 --times 2
+  GET /historico    <span class="text-fail">404</span>
+<span class="text-fail">BUG 2/2</span>  evidence/CT-730/
+<span class="text-mist">$</span> reproduce CT-STORAGE
+<span class="text-hold">NOT_TESTED</span>  env-down
+<span class="cursor text-mist">$ </span></code></pre>
+          <figcaption class="sr-only">Exemplo de saída do console: dois bugs reproduzidos duas vezes e um caso não testado por problema de ambiente.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Testes -->
+    <section id="testes" data-view="testes" hidden class="mx-auto max-w-4xl px-5 py-20" aria-labelledby="titulo-testes">
+      <h2 id="titulo-testes" class="font-display text-3xl font-bold">Testes</h2>
+      <p class="mt-2 text-lg text-mist">Quando usar cada teste</p>
+
+      <div class="mt-10 grid gap-3">
+        <details class="group rounded-lg border border-scan/60 bg-hull open:bg-panel" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-scan">Teste de Caixa Branca</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Quem conhece o código</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Testa o funcionamento interno do sistema, com acesso ao código-fonte. Quem testa escolhe as entradas olhando a lógica: cada condição, cada ramo de um if, cada laço, cada caminho possível. O objetivo é garantir que todas as partes do código foram executadas e se comportam como deveriam.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Durante o desenvolvimento, em testes unitários e de integração, para medir cobertura de código, encontrar trechos nunca executados e validar regras complexas de cálculo ou permissão.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-scan/60 bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-scan">Teste de Caixa Preta</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Sem ver o código</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Testa o sistema pelo lado de fora, como um usuário, sem olhar o código. Quem testa só conhece as entradas e as saídas esperadas, definidas nos requisitos e na documentação, e verifica se o resultado na tela corresponde ao que foi pedido.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Na homologação de entregas, na validação de requisitos e critérios de aceite, e em testes de sistema e aceitação. É o tipo mais usado no fluxo de QA do Conecta.</p></div>
+          </div>
+        </details>
+      </div>
+
+      <h3 class="mt-12 font-display text-xl font-semibold">Outros testes recomendados</h3>
+      <p class="mt-1 text-sm text-mist">Do nível do código à experiência de quem usa.</p>
+      <div class="mt-5 grid gap-3">
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Caixa Cinza</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Mistura das duas</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Testa pela interface, como na caixa-preta, mas com algum conhecimento interno: rotas da API, estrutura do banco, regras de permissão ou as requisições de rede da página.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Para investigar bugs e escrever relatórios precisos, indicando qual requisição falhou e com qual status. É a abordagem do mini-qa-harness.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste Unitário</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa branca</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Verifica a menor parte do código, como uma função ou um componente, isolada do resto.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">A cada mudança de código, rodando automaticamente antes do merge.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Integração</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa branca ou cinza</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Verifica se módulos e serviços funcionam juntos: frontend com API, API com banco, sistema com serviços externos.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Quando duas partes passam a se comunicar ou quando um contrato entre elas muda.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de API</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta ou cinza</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Valida requisições e respostas: status, formato dos dados, mensagens de erro e permissões por perfil.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Quando um endpoint é criado ou alterado, antes mesmo de a tela estar pronta.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Sistema (ponta a ponta)</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Percorre um fluxo completo do usuário, do login ao resultado final, com o sistema inteiro rodando.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em fluxos críticos, como enviar uma prestação de contas do início ao fim.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Aceitação</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">O cliente ou responsável pelo negócio confirma que a entrega atende aos critérios de aceite.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Antes de uma entrega ir para produção.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Smoke Test</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Checagem rápida de que o essencial funciona: o sistema abre, o login entra, as telas principais carregam.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Logo após cada deploy, antes de qualquer teste mais longo.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Regressão</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Repete testes que já passaram para garantir que uma mudança nova não quebrou o que funcionava.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Após correções e novas funcionalidades, principalmente em telas próximas da alteração.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Reteste</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Executa de novo o caso que falhou para confirmar se o defeito foi corrigido.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Quando a issue chega em Pending Retest no ciclo de vida do bug.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste Exploratório</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta ou cinza</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Quem testa investiga livremente, guiado por um objetivo, criando os próximos passos conforme observa o sistema.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em funcionalidades novas, telas com pouca documentação ou para achar bugs que roteiros não preveem.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Usabilidade</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Avalia se a tela é fácil de entender e usar: clareza dos textos, mensagens de erro, consistência e esforço para concluir a tarefa.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em toda Task que produz telas, no Desktop e no Mobile.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Acessibilidade</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta ou cinza</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Verifica se pessoas com deficiência conseguem usar o sistema: contraste, navegação por teclado, leitor de tela e textos alternativos, seguindo a WCAG.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em toda Task que produz telas.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Compatibilidade e Responsividade</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Confere o sistema em navegadores, sistemas e tamanhos de tela diferentes.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em telas novas ou alteradas, sempre no Desktop e no Mobile.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Desempenho</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta ou cinza</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Mede tempo de resposta e estabilidade sob muitos usuários (carga), além do limite (estresse) ou por longos períodos.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Antes de prazos com muito acesso, como encerramento de editais e prestações.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Teste de Segurança</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Caixa preta, cinza ou branca</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Procura vulnerabilidades e acessos indevidos: um perfil vendo ou alterando dados de outro, dados expostos, entradas maliciosas.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em funcionalidades com permissões, dados pessoais ou financeiros.</p></div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- GitHub -->
+    <section id="github" data-view="github" hidden class="mx-auto max-w-6xl px-5 py-20" aria-labelledby="titulo-github">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="titulo-github" class="font-display text-3xl font-bold">GitHub</h2>
+          <p class="mt-2 max-w-2xl text-mist">Issues em teste no GitHub Projects. Onda 1 do piloto: bugs com erro objetivo de rede ou de persistência, todos de prioridade alta.</p>
+        </div>
+        <dl class="flex gap-6 font-mono text-sm">
+          <div><dt class="text-mist">Confirmados</dt><dd class="text-2xl text-fail">2</dd></div>
+          <div><dt class="text-mist">Na fila</dt><dd class="text-2xl text-scan">3</dd></div>
+          <div><dt class="text-mist">Bloqueados</dt><dd class="text-2xl text-hold">1</dd></div>
+        </dl>
+      </div>
+
+      <div class="mt-10 overflow-x-auto rounded-lg border border-wire">
+        <table class="w-full min-w-[720px] text-left text-sm">
+          <caption class="sr-only">Casos de teste da Onda 1 com módulo, perfil e veredito</caption>
+          <thead class="bg-hull font-mono text-xs text-mist">
+            <tr>
+              <th scope="col" class="px-5 py-3 font-medium">Caso</th>
+              <th scope="col" class="px-5 py-3 font-medium">O que se verifica</th>
+              <th scope="col" class="px-5 py-3 font-medium">Módulo</th>
+              <th scope="col" class="px-5 py-3 font-medium">Perfil</th>
+              <th scope="col" class="px-5 py-3 font-medium">Veredito</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-wire">
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-691</th>
+              <td class="px-5 py-4">Estorno associado a débito em devolução</td>
+              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
+              <td class="px-5 py-4 text-mist">coordenador</td>
+              <td class="px-5 py-4"><span class="rounded border border-fail/40 bg-fail/10 px-2 py-1 font-mono text-xs text-fail">BUG 2/2</span></td>
+            </tr>
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-619</th>
+              <td class="px-5 py-4">Remover nota fiscal de prestação em rascunho</td>
+              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
+              <td class="px-5 py-4 text-mist">coordenador</td>
+              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            </tr>
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-597</th>
+              <td class="px-5 py-4">Excluir NF-e anexada na mesma sessão</td>
+              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
+              <td class="px-5 py-4 text-mist">coordenador</td>
+              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            </tr>
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-647</th>
+              <td class="px-5 py-4">Abrir arquivo de cotação no Backoffice</td>
+              <td class="px-5 py-4 text-mist">M014 · Backoffice</td>
+              <td class="px-5 py-4 text-mist">analista</td>
+              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            </tr>
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-730</th>
+              <td class="px-5 py-4">Histórico do bolsista na aba Histórico</td>
+              <td class="px-5 py-4 text-mist">M009 · Frontoffice</td>
+              <td class="px-5 py-4 text-mist">coordenador</td>
+              <td class="px-5 py-4"><span class="rounded border border-fail/40 bg-fail/10 px-2 py-1 font-mono text-xs text-fail">BUG 2/2</span></td>
+            </tr>
+            <tr class="hover:bg-panel">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-STORAGE</th>
+              <td class="px-5 py-4">Anexos de Invoice e Passagem no storage</td>
+              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
+              <td class="px-5 py-4 text-mist">coordenador</td>
+              <td class="px-5 py-4"><span class="rounded border border-hold/40 bg-hold/10 px-2 py-1 font-mono text-xs text-hold">NOT_TESTED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 font-mono text-xs text-mist">Os vereditos acima são dados de exemplo. Substitua pelos resultados da sua rodada.</p>
+    </section>
+
+    <!-- Tags -->
+    <section id="tags" data-view="tags" hidden class="border-y border-wire bg-hull" aria-labelledby="titulo-tags">
+      <div class="mx-auto max-w-6xl px-5 py-20">
+        <h2 id="titulo-tags" class="font-display text-3xl font-bold">Tags</h2>
+        <p class="mt-2 max-w-2xl text-mist">No GitHub Projects, as Tasks recebem tags para organização das demandas e posterior análise de dados.</p>
+
+        <figure class="mt-10 rounded-lg border border-wire bg-abyss p-6">
+          <svg viewBox="0 0 530 590" class="mx-auto block h-auto w-full max-w-xl font-display text-[15px] font-semibold" role="img" aria-labelledby="ciclo-titulo ciclo-desc">
+            <title id="ciclo-titulo">Ciclo de vida do bug</title>
+            <desc id="ciclo-desc">New, Assigned, Open, Fixed, Pending Retest, Retest, Verified e Close, em sequência. De Open o defeito pode virar Duplicate, Deferred ou Not a Bug. De Retest pode ir para ReOpened, que volta para Open.</desc>
+            <defs>
+              <marker id="ponta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#7FA592"/></marker>
+              <style>.seta { stroke: #7FA592; stroke-width: 1.5; marker-end: url(#ponta); }</style>
+            </defs>
+            <rect x="190" y="20" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="47" text-anchor="middle" fill="#D4F7E4">New</text><line x1="265" y1="64" x2="265" y2="90" class="seta"/><rect x="190" y="92" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="119" text-anchor="middle" fill="#D4F7E4">Assigned</text><line x1="265" y1="136" x2="265" y2="162" class="seta"/><rect x="190" y="164" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="191" text-anchor="middle" fill="#D4F7E4">Open</text><line x1="265" y1="208" x2="265" y2="234" class="seta"/><rect x="190" y="236" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="263" text-anchor="middle" fill="#D4F7E4">Fixed</text><line x1="265" y1="280" x2="265" y2="306" class="seta"/><rect x="190" y="308" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="335" text-anchor="middle" fill="#D4F7E4">Pending Retest</text><line x1="265" y1="352" x2="265" y2="378" class="seta"/><rect x="190" y="380" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="407" text-anchor="middle" fill="#D4F7E4">Retest</text><line x1="265" y1="424" x2="265" y2="450" class="seta"/><rect x="190" y="452" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="479" text-anchor="middle" fill="#D4F7E4">Verified</text><line x1="265" y1="496" x2="265" y2="522" class="seta"/><rect x="190" y="524" width="150" height="44" rx="6" fill="rgba(198,255,77,0.10)" stroke="#C6FF4D" stroke-width="1.5"/><text x="265.0" y="551" text-anchor="middle" fill="#C6FF4D">Close</text><line x1="340" y1="186" x2="378" y2="186" class="seta"/><rect x="380" y="150" width="140" height="72" rx="6" fill="rgba(255,181,71,0.10)" stroke="#FFB547" stroke-width="1.5"/><text x="450" y="174" text-anchor="middle" fill="#FFB547">Duplicate</text><text x="450" y="192" text-anchor="middle" fill="#FFB547">Deferred</text><text x="450" y="210" text-anchor="middle" fill="#FFB547">Not a Bug</text><line x1="190" y1="402" x2="142" y2="402" class="seta"/><rect x="10" y="380" width="130" height="44" rx="6" fill="rgba(255,77,109,0.10)" stroke="#FF4D6D" stroke-width="1.5"/><text x="75.0" y="407" text-anchor="middle" fill="#FF4D6D">ReOpened</text><polyline points="75,380 75,186 186,186" fill="none" stroke="#7FA592" stroke-width="1.5" marker-end="url(#ponta)"/>
+          </svg>
+          <figcaption class="mt-4 text-center font-mono text-xs text-mist">Ciclo de vida do bug: de Retest o defeito pode voltar como ReOpened.</figcaption>
+        </figure>
+
+        <section class="mt-12" aria-labelledby="titulo-uso-tags">
+          <h3 id="titulo-uso-tags" class="font-display text-xl font-semibold">Quando usar cada tag</h3>
+          <dl class="mt-5 divide-y divide-wire overflow-hidden rounded-lg border border-wire">
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA New</span></dt>
+              <dd class="text-sm text-frost">Defeito identificado e cadastrado pela primeira vez.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Assigned</span></dt>
+              <dd class="text-sm text-frost">Defeito é atribuído para um Dev avaliar.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Open</span></dt>
+              <dd class="text-sm text-frost">Dev inicia análise e correção.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Fixed</span></dt>
+              <dd class="text-sm text-frost">Dev finaliza a correção.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Pending Retest</span></dt>
+              <dd class="text-sm text-frost">Em espera do time de teste verificar.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Retest</span></dt>
+              <dd class="text-sm text-frost">Em execução do reteste.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-scan text-scan bg-scan/10">QA Verified</span></dt>
+              <dd class="text-sm text-frost">Defeito corrigido.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-pass text-pass bg-pass/10">QA Close</span></dt>
+              <dd class="text-sm text-frost">Defeito corrigido, testado e aprovado.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-fail text-fail bg-fail/10">QA ReOpened</span></dt>
+              <dd class="text-sm text-frost">Defeito não corrigido.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-hold text-hold bg-hold/10">QA Duplicate</span></dt>
+              <dd class="text-sm text-frost">Defeito já encontrado antes e verificado em outra Task.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-hold text-hold bg-hold/10">QA Deferred</span></dt>
+              <dd class="text-sm text-frost">Defeito será corrigido em versões futuras.</dd>
+            </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-hold text-hold bg-hold/10">QA Not a Bug</span></dt>
+              <dd class="text-sm text-frost">Dev verificou e não era um defeito.</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    </section>
+
+    <!-- Workflow -->
+    <section id="workflow" data-view="workflow" hidden class="mx-auto max-w-6xl px-5 py-20" aria-labelledby="titulo-workflow">
+      <h2 id="titulo-workflow" class="font-display text-3xl font-bold">Workflow</h2>
+      <p class="mt-2 max-w-2xl text-lg text-mist">Por onde passa o trabalho de QA</p>
+
+      <!-- Fluxo no quadro -->
+      <ol class="mt-10 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1.1fr]" aria-label="Fluxo da issue no quadro">
+        <li class="rounded-lg border border-wire bg-hull p-5">
+          <p class="font-mono text-xs text-mist">Coluna</p>
+          <h3 class="mt-1 font-display text-xl font-semibold text-frost">Homologation</h3>
+          <p class="mt-3 text-sm leading-relaxed text-mist">Testar as entregas que estão nesta coluna.</p>
+        </li>
+        <li aria-hidden="true"><div class="flex items-center justify-center text-mist" aria-hidden="true"><svg class="h-6 w-6 rotate-90 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div></li>
+        <li class="rounded-lg border border-scan/60 bg-scan/5 p-5 shadow-[0_0_30px_-14px_rgba(0,255,156,0.6)]">
+          <p class="font-mono text-xs text-scan">Subissue</p>
+          <h3 class="mt-1 font-display text-xl font-semibold text-frost">Teste de QA</h3>
+          <p class="mt-3 text-sm leading-relaxed text-mist">A partir da issue existente, criar uma subissue de QA atrelada a ela e realizar o teste.</p>
+        </li>
+        <li aria-hidden="true"><div class="flex items-center justify-center text-mist" aria-hidden="true"><svg class="h-6 w-6 rotate-90 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div></li>
+        <li class="grid gap-3">
+          <div class="rounded-lg border border-pass/60 bg-pass/5 p-5">
+            <p class="font-mono text-xs text-pass">Tudo certo</p>
+            <h3 class="mt-1 font-display text-xl font-semibold text-frost">Done</h3>
+            <p class="mt-2 text-sm text-mist">A issue vai para a coluna Done.</p>
+          </div>
+          <div class="rounded-lg border border-fail/60 bg-fail/5 p-5">
+            <p class="font-mono text-xs text-fail">Algo a verificar</p>
+            <h3 class="mt-1 font-display text-xl font-semibold text-frost">Desaprovado</h3>
+            <p class="mt-2 text-sm text-mist">A issue vai para a coluna Desaprovado.</p>
+          </div>
+        </li>
+      </ol>
+
+      <!-- O que o teste cobre -->
+      <div class="mt-14 grid gap-6 md:grid-cols-2">
+        <article class="rounded-lg border border-wire bg-hull p-6" aria-labelledby="wf-func">
+          <svg class="h-8 w-8 text-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+          <h3 id="wf-func" class="mt-4 font-display text-xl font-semibold">Funcionalidades</h3>
+          <p class="mt-2 leading-relaxed text-mist">O teste analisa os requisitos e a documentação. Se faltar alguma informação nesses locais, abra uma Task para incluir o que faltar.</p>
+        </article>
+        <article class="rounded-lg border border-wire bg-hull p-6" aria-labelledby="wf-ux">
+          <svg class="h-8 w-8 text-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="1.5"/><path d="M6 18h6M9 14v4"/><rect x="17" y="8" width="5" height="10" rx="1"/></svg>
+          <h3 id="wf-ux" class="mt-4 font-display text-xl font-semibold">Telas</h3>
+          <p class="mt-2 leading-relaxed text-mist">Toda Task que produz telas passa por teste de usabilidade em três frentes:</p>
+          <ul class="mt-4 flex flex-wrap gap-2 font-mono text-sm">
+            <li class="rounded border border-scan/60 px-2.5 py-1 text-scan">Desktop</li>
+            <li class="rounded border border-scan/60 px-2.5 py-1 text-scan">Mobile</li>
+            <li class="rounded border border-scan/60 px-2.5 py-1 text-scan">Acessibilidade</li>
+          </ul>
+        </article>
+      </div>
+
+      <!-- Regra das mensagens de erro -->
+      <section class="mt-6 rounded-lg border border-hold/50 bg-hold/5 p-6 md:p-8" aria-labelledby="wf-erros">
+        <h3 id="wf-erros" class="font-display text-xl font-semibold text-hold">Atenção a cenários e mensagens de erro</h3>
+        <p class="mt-2 max-w-2xl leading-relaxed text-frost"><strong class="font-semibold">Regra:</strong> a mensagem diz qual é o erro e o que o usuário deve fazer. Evite mandar o usuário entrar em contato.</p>
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <figure>
+            <div class="rounded-md border border-fail/50 bg-abyss p-4">
+              <p class="font-semibold text-frost">Não foi possível concluir esta requisição.</p>
+              <p class="mt-1 text-sm text-mist">Por favor, entre em contato com a FAPES.</p>
+            </div>
+            <figcaption class="mt-2 flex items-center gap-2 font-mono text-xs text-fail"><span aria-hidden="true">✕</span> Evitar: não diz o erro nem o próximo passo</figcaption>
+          </figure>
+          <figure>
+            <div class="rounded-md border border-pass/50 bg-abyss p-4">
+              <p class="font-semibold text-frost">A nota fiscal não foi removida.</p>
+              <p class="mt-1 text-sm text-mist">Esta prestação já foi enviada para análise. Peça a devolução para editar.</p>
+            </div>
+            <figcaption class="mt-2 flex items-center gap-2 font-mono text-xs text-pass"><span aria-hidden="true">✓</span> Usar: o erro e o que fazer</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <h3 class="mt-16 font-display text-xl font-semibold">Etapas de um teste com agentes</h3>
+      <p class="mt-2 max-w-2xl text-mist">Da leitura da issue à limpeza do ambiente. Os agentes testam; uma pessoa decide o que é publicado.</p>
+
+      <ol class="mt-6 grid gap-px overflow-hidden rounded-lg border border-wire bg-wire sm:grid-cols-2 lg:grid-cols-4">
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">01</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Ler a issue</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Copiar os critérios de aceite sem parafrasear.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">02</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Checar o ambiente</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Versão no ar, migrations, flags e dados de teste.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">03</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Validar perfis</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist"><code class="font-mono text-frost">qa smoke</code> entra com cada perfil necessário.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">04</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Disparar testadores</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Agentes em paralelo, dois ou três casos cada, 15 minutos.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">05</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Verificar achados</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Conferir telas, rede e trace; descartar falhas de ambiente.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">06</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Registrar</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Gravar a reprodução com trace do Playwright e, se quiser, Jam.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">07</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Revisar e publicar</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Rascunho aprovado por uma pessoa antes de ir para o GitHub.</p>
+        </li>
+        <li class="bg-abyss p-6">
+          <span class="font-mono text-sm text-scan">08</span>
+          <h4 class="mt-3 font-display text-lg font-semibold">Limpar</h4>
+          <p class="mt-2 text-sm leading-relaxed text-mist">Apagar pela interface os dados com prefixo de teste.</p>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="border-t border-wire">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 font-mono text-xs text-mist">
+      <p>QA Conecta · LEDS / Conecta FAPES</p>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var views = ['testes', 'tags', 'workflow', 'github'];
+
+      function show(name) {
+        var active = views.indexOf(name) !== -1 ? name : 'inicio';
+        document.querySelectorAll('[data-view]').forEach(function (el) {
+          var on = el.getAttribute('data-view') === active;
+          el.hidden = !on;
+          el.style.display = on ? '' : 'none';
+        });
+        document.querySelectorAll('[data-nav]').forEach(function (a) {
+          if (a.getAttribute('data-nav') === active) a.setAttribute('aria-current', 'page');
+          else a.removeAttribute('aria-current');
+        });
+        window.scrollTo(0, 0);
+        if (active !== 'inicio') {
+          var heading = document.getElementById('titulo-' + active);
+          if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
+        }
+      }
+
+      // Trata os cliques direto no JavaScript, sem depender da navegação por âncora,
+      // que pode ser bloqueada em visualizadores embutidos (iframes).
+      document.addEventListener('click', function (event) {
+        var link = event.target.closest('a[href^="#"]');
+        if (!link) return;
+        var name = link.getAttribute('href').slice(1);
+        if (name !== 'inicio' && views.indexOf(name) === -1) return;
+        event.preventDefault();
+        show(name);
+        try { history.pushState(null, '', '#' + name); } catch (e) {}
+      });
+
+      window.addEventListener('popstate', function () { show(location.hash.slice(1)); });
+      window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+
+      var start = '';
+      try { start = location.hash.slice(1); } catch (e) {}
+      show(start);
+    })();
+  </script>
+</body>
+</html>
