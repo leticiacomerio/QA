@@ -66,7 +66,10 @@
     @keyframes blip { 0% { opacity: 1; box-shadow: 0 0 12px var(--c); } 45% { opacity: .35; box-shadow: none; } 100% { opacity: .25; } }
     @keyframes ring { 0% { opacity: .9; transform: scale(1); } 20% { opacity: 0; transform: scale(4); } 100% { opacity: 0; } }
     @keyframes tag { 0%, 3% { opacity: 0; transform: translate(-4px,-50%); } 8%, 40% { opacity: 1; transform: translate(0,-50%); } 55%, 100% { opacity: 0; } }
+    .bug-blink { animation: bugblink 1.6s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(0,255,156,.6)); }
+    @keyframes bugblink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
     @media (prefers-reduced-motion: reduce) {
+      .bug-blink { animation: none; }
       .radar-sweep, .blip, .blip-ring { animation: none; } .blip { opacity: 1; } .blip-tag { animation: none; opacity: 1; }
       html { scroll-behavior: auto; }
       .scanline::after, .cursor::after { animation: none; }
@@ -79,6 +82,7 @@
   <header class="sticky z-50 border-b border-wire bg-abyss/85 backdrop-blur" style="top: env(safe-area-inset-top, 0px);">
     <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
       <a href="#inicio" class="flex items-center gap-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-scan" aria-label="QA Conecta, página inicial">
+        <svg class="bug-blink h-6 w-6 text-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><rect x="7" y="7.5" width="10" height="12" rx="5"/><path d="M12 11v8.5M7 12H3.5M17 12h3.5M7 16H4M17 16h3M8 8.5 5.5 6M16 8.5 18.5 6"/></svg>
         <span class="font-display text-xl font-bold tracking-wide">QA Conecta</span>
       </a>
       <nav aria-label="Seções principais">
@@ -697,6 +701,12 @@
     <section id="workflow" data-view="workflow" hidden class="mx-auto max-w-6xl px-5 py-20" aria-labelledby="titulo-workflow">
       <h2 id="titulo-workflow" class="font-display text-3xl font-bold">Workflow</h2>
       <p class="mt-2 max-w-2xl text-lg text-mist">Por onde passa o trabalho de QA</p>
+      <a href="https://github.com/orgs/leds-conectafapes/projects/46/views/3" target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-2 rounded border border-scan/60 bg-scan/5 px-4 py-2.5 font-display font-semibold text-scan hover:bg-scan hover:text-abyss focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+        Board de Q.A.
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        <span class="sr-only">(abre em nova aba)</span>
+      </a>
 
       <!-- Fluxo no quadro -->
       <ol class="mt-10 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1.1fr]" aria-label="Fluxo da issue no quadro">
