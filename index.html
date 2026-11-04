@@ -58,14 +58,9 @@
     .cursor::after { content: "▌"; color: #00FF9C; animation: blink 1s steps(1) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
     .clip-corner { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); }
-    .bug-pulse { animation: bugPulse 3.2s ease-in-out infinite; }
-    @keyframes bugPulse {
-      0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(0, 255, 156, 0.6)); }
-      50% { opacity: 0.45; filter: drop-shadow(0 0 1px rgba(0, 255, 156, 0.15)); }
-    }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .scanline::after, .cursor::after, .bug-pulse { animation: none; }
+      .scanline::after, .cursor::after { animation: none; }
     }
   </style>
 </head>
@@ -75,15 +70,6 @@
   <header class="sticky z-50 border-b border-wire bg-abyss/85 backdrop-blur" style="top: env(safe-area-inset-top, 0px);">
     <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
       <a href="#inicio" class="flex items-center gap-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-scan" aria-label="QA Conecta, página inicial">
-        <svg class="bug-pulse h-7 w-7 text-scan" viewBox="0 0 32 32" aria-hidden="true">
-          <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
-            <path d="M7 4c0 4 1.5 6.5 4 8.5M25 4c0 4-1.5 6.5-4 8.5"/>
-            <path d="M2.5 17h5.5M24 17h5.5"/>
-            <path d="M7 29c0-4 1.5-6.5 4-8.5M25 29c0-4-1.5-6.5-4-8.5"/>
-          </g>
-          <circle cx="16" cy="9.5" r="4.5" fill="currentColor"/>
-          <ellipse cx="16" cy="18.5" rx="8" ry="9.5" fill="currentColor"/>
-        </svg>
         <span class="font-display text-xl font-bold tracking-wide">QA Conecta</span>
       </a>
       <nav aria-label="Seções principais">
@@ -369,313 +355,252 @@
         </details>
       </div>
 
-      <!-- Qualidade de Código -->
-      <section class="mt-16" aria-labelledby="titulo-qualidade-codigo">
-        <h3 id="titulo-qualidade-codigo" class="font-display text-xl font-semibold">Qualidade de Código</h3>
-        <p class="mt-1 text-sm text-mist">Organização dos testes por stack do Conecta, do código à interface.</p>
-        <div class="mt-5 grid gap-3">
-        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-            <span class="flex flex-wrap items-center gap-3">
-              <span class="font-display text-lg font-semibold text-frost">Front-end</span>
-              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Vue 3 + TypeScript + Vite</span>
-            </span>
-            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          </summary>
-          <div class="border-t border-wire px-5 py-5">
-            <p class="mb-4 text-sm leading-relaxed text-mist">Portal e Backoffice. Testes rápidos na base (estático, unitário, componente) e poucos testes de interface no topo.</p>
-            <div class="overflow-x-auto rounded-lg border border-wire">
-              <table class="w-full min-w-[560px] text-left text-sm">
-                <caption class="sr-only">Testes de front-end: tipo, ferramenta e foco</caption>
-                <thead class="bg-abyss font-mono text-xs text-mist">
-                  <tr><th scope="col" class="px-4 py-3 font-medium">Teste</th><th scope="col" class="px-4 py-3 font-medium">Ferramenta</th><th scope="col" class="px-4 py-3 font-medium">Foco</th></tr>
-                </thead>
-                <tbody class="divide-y divide-wire">
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Estático</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">vue-tsc + ESLint</td>
-                    <td class="px-4 py-3 text-mist">Tipos e padrões, antes de rodar</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Unitário</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Vite + Vitest</td>
-                    <td class="px-4 py-3 text-mist">Composables, stores Pinia, schemas Zod, cálculos</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Componente</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Vitest + Vue Test Utils</td>
-                    <td class="px-4 py-3 text-mist">Estados de loading, vazio, erro e sucesso</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Integração com API mockada</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Vitest + MSW</td>
-                    <td class="px-4 py-3 text-mist">Tratamento de 403, 404, 422 e timeout</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Cobertura</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Vitest (--coverage)</td>
-                    <td class="px-4 py-3 text-mist">Mínimo exigido no CI</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">API</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Playwright + TypeScript</td>
-                    <td class="px-4 py-3 text-mist">Endpoints do back-end: status, corpo e permissões por perfil</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Web (E2E)</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Playwright + TypeScript</td>
-                    <td class="px-4 py-3 text-mist">Fluxos críticos pela interface, com axe para acessibilidade</td>
-                  </tr>
-                </tbody>
-              </table>
+      <section id="qualidade-codigo" class="mt-16" aria-labelledby="titulo-qualidade-codigo">
+        <h3 id="titulo-qualidade-codigo" class="font-display text-2xl font-bold">Qualidade de Código</h3>
+        <p class="mt-2 text-mist">Organização dos testes por stack do Conecta, do código à interface.</p>
+        <div class="mt-6 grid gap-3">
+          <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-3">
+                <span class="font-display text-lg font-semibold text-frost">Front-end</span>
+                <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Vue 3 + TypeScript + Vite</span>
+              </span>
+              <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <div class="border-t border-wire px-5 py-5">
+              <p class="text-mist">Portal e Backoffice. Testes rápidos na base (estático, unitário, componente) e poucos testes de interface no topo.</p>
+              <div class="mt-4 overflow-x-auto rounded-lg border border-wire">
+                <table class="w-full min-w-[560px] text-left text-sm">
+                  <thead class="bg-abyss font-mono text-xs text-mist"><tr><th scope="col" class="px-4 py-3 font-medium">Teste</th><th scope="col" class="px-4 py-3 font-medium">Ferramenta</th><th scope="col" class="px-4 py-3 font-medium">Foco</th></tr></thead>
+                  <tbody class="divide-y divide-wire">
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Estático</th><td class="px-4 py-3 font-mono text-xs text-scan">vue-tsc + ESLint</td><td class="px-4 py-3 text-mist">Tipos e padrões, antes de rodar</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Unitário</th><td class="px-4 py-3 font-mono text-xs text-scan">Vite + Vitest</td><td class="px-4 py-3 text-mist">Composables, stores Pinia, schemas Zod, cálculos</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Componente</th><td class="px-4 py-3 font-mono text-xs text-scan">Vitest + Vue Test Utils</td><td class="px-4 py-3 text-mist">Estados de loading, vazio, erro e sucesso</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Integração com API mockada</th><td class="px-4 py-3 font-mono text-xs text-scan">Vitest + MSW</td><td class="px-4 py-3 text-mist">Tratamento de 403, 404, 422 e timeout</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Cobertura</th><td class="px-4 py-3 font-mono text-xs text-scan">Vitest (--coverage)</td><td class="px-4 py-3 text-mist">Mínimo exigido no CI</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">API</th><td class="px-4 py-3 font-mono text-xs text-scan">Playwright + TypeScript</td><td class="px-4 py-3 text-mist">Endpoints do back-end: status, corpo e permissões por perfil</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Web (E2E)</th><td class="px-4 py-3 font-mono text-xs text-scan">Playwright + TypeScript</td><td class="px-4 py-3 text-mist">Fluxos críticos pela interface, com axe para acessibilidade</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </details>
-        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-            <span class="flex flex-wrap items-center gap-3">
-              <span class="font-display text-lg font-semibold text-frost">Back-end</span>
-              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">.NET (C#) + SQL Server</span>
-            </span>
-            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          </summary>
-          <div class="border-t border-wire px-5 py-5">
-            <p class="mb-4 text-sm leading-relaxed text-mist">APIs do Frontoffice, Backoffice e Prestação de Contas. Prioridade: regras de negócio e autorização por perfil.</p>
-            <div class="overflow-x-auto rounded-lg border border-wire">
-              <table class="w-full min-w-[560px] text-left text-sm">
-                <caption class="sr-only">Testes de back-end: tipo, ferramenta e foco</caption>
-                <thead class="bg-abyss font-mono text-xs text-mist">
-                  <tr><th scope="col" class="px-4 py-3 font-medium">Teste</th><th scope="col" class="px-4 py-3 font-medium">Ferramenta</th><th scope="col" class="px-4 py-3 font-medium">Foco</th></tr>
-                </thead>
-                <tbody class="divide-y divide-wire">
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Estático</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Analisadores Roslyn + SonarQube</td>
-                    <td class="px-4 py-3 text-mist">Code smells, bugs e vulnerabilidades</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Unitário</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">xUnit + FluentAssertions + NSubstitute</td>
-                    <td class="px-4 py-3 text-mist">Regras de negócio e validações</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Integração</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">WebApplicationFactory</td>
-                    <td class="px-4 py-3 text-mist">Endpoints, status e respostas</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Banco</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Testcontainers (SQL Server)</td>
-                    <td class="px-4 py-3 text-mist">Migrations, consultas e T-SQL</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Autorização</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Testes de integração com OpenFGA</td>
-                    <td class="px-4 py-3 text-mist">Permissões por perfil</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Contrato</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Pact ou validação do OpenAPI</td>
-                    <td class="px-4 py-3 text-mist">Acordo entre front e back</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Mutação</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Stryker.NET</td>
-                    <td class="px-4 py-3 text-mist">Se os testes realmente detectam erros</td>
-                  </tr>
-                  <tr class="hover:bg-hull">
-                    <th scope="row" class="px-4 py-3 font-medium text-frost">Cobertura</th>
-                    <td class="px-4 py-3 font-mono text-xs text-scan">Coverlet + SonarQube</td>
-                    <td class="px-4 py-3 text-mist">Mínimo exigido no CI</td>
-                  </tr>
-                </tbody>
-              </table>
+          </details>
+          <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-3">
+                <span class="font-display text-lg font-semibold text-frost">Back-end</span>
+                <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">.NET (C#) + SQL Server</span>
+              </span>
+              <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <div class="border-t border-wire px-5 py-5">
+              <p class="text-mist">APIs do Frontoffice, Backoffice e Prestação de Contas. Prioridade: regras de negócio e autorização por perfil.</p>
+              <div class="mt-4 overflow-x-auto rounded-lg border border-wire">
+                <table class="w-full min-w-[560px] text-left text-sm">
+                  <thead class="bg-abyss font-mono text-xs text-mist"><tr><th scope="col" class="px-4 py-3 font-medium">Teste</th><th scope="col" class="px-4 py-3 font-medium">Ferramenta</th><th scope="col" class="px-4 py-3 font-medium">Foco</th></tr></thead>
+                  <tbody class="divide-y divide-wire">
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Estático</th><td class="px-4 py-3 font-mono text-xs text-scan">Analisadores Roslyn + SonarQube</td><td class="px-4 py-3 text-mist">Code smells, bugs e vulnerabilidades</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Unitário</th><td class="px-4 py-3 font-mono text-xs text-scan">xUnit + FluentAssertions + NSubstitute</td><td class="px-4 py-3 text-mist">Regras de negócio e validações</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Integração</th><td class="px-4 py-3 font-mono text-xs text-scan">WebApplicationFactory</td><td class="px-4 py-3 text-mist">Endpoints, status e respostas</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Banco</th><td class="px-4 py-3 font-mono text-xs text-scan">Testcontainers (SQL Server)</td><td class="px-4 py-3 text-mist">Migrations, consultas e T-SQL</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Autorização</th><td class="px-4 py-3 font-mono text-xs text-scan">Testes de integração com OpenFGA</td><td class="px-4 py-3 text-mist">Permissões por perfil</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Contrato</th><td class="px-4 py-3 font-mono text-xs text-scan">Pact ou validação do OpenAPI</td><td class="px-4 py-3 text-mist">Acordo entre front e back</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Mutação</th><td class="px-4 py-3 font-mono text-xs text-scan">Stryker.NET</td><td class="px-4 py-3 text-mist">Se os testes realmente detectam erros</td></tr>
+                    <tr><th scope="row" class="px-4 py-3 font-medium text-frost">Cobertura</th><td class="px-4 py-3 font-mono text-xs text-scan">Coverlet + SonarQube</td><td class="px-4 py-3 text-mist">Mínimo exigido no CI</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </details>
+          </details>
         </div>
       </section>
 
-      <!-- Nomenclatura -->
-      <section class="mt-16" aria-labelledby="titulo-nomenclatura">
-        <h3 id="titulo-nomenclatura" class="font-display text-xl font-semibold">Nomenclatura</h3>
-        <p class="mt-1 text-sm text-mist">Termos usados no dia a dia de QA, segundo a terminologia do ISTQB.</p>
-
-        <details class="group mt-5 rounded-lg border border-wire bg-hull open:bg-panel">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-            <span class="flex flex-wrap items-center gap-3">
-              <span class="font-display text-lg font-semibold text-frost">Erro, Defeito (Bug) e Falha</span>
-              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Causa e efeito</span>
-            </span>
-            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          </summary>
-          <div class="border-t border-wire px-5 py-5">
-        <p class="text-sm leading-relaxed text-mist">Os três formam uma cadeia: o erro gera o defeito, que gera a falha.</p>
-
-        <ol class="mt-5 grid gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr]" aria-label="Cadeia: erro causa defeito, que causa falha">
-          <li class="rounded-lg border border-hold/60 bg-hold/5 p-5">
-            <p class="font-mono text-xs text-hold">Causa humana</p>
-            <h4 class="mt-1 font-display text-xl font-semibold text-frost">Erro</h4>
-            <p class="mt-1 font-mono text-xs text-mist">ou engano</p>
-            <p class="mt-3 text-sm leading-relaxed text-mist">Uma ação humana equivocada de quem desenvolve, analisa ou escreve o requisito.</p>
-          </li>
-          <li aria-hidden="true" class="flex items-center justify-center text-mist"><svg class="h-6 w-6 rotate-90 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></li>
-          <li class="rounded-lg border border-scan/60 bg-scan/5 p-5">
-            <p class="font-mono text-xs text-scan">No produto</p>
-            <h4 class="mt-1 font-display text-xl font-semibold text-frost">Defeito</h4>
-            <p class="mt-1 font-mono text-xs text-mist">ou bug</p>
-            <p class="mt-3 text-sm leading-relaxed text-mist">A imperfeição deixada pelo erro no código, no requisito ou no protótipo.</p>
-          </li>
-          <li aria-hidden="true" class="flex items-center justify-center text-mist"><svg class="h-6 w-6 rotate-90 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></li>
-          <li class="rounded-lg border border-fail/60 bg-fail/5 p-5">
-            <p class="font-mono text-xs text-fail">Na execução</p>
-            <h4 class="mt-1 font-display text-xl font-semibold text-frost">Falha</h4>
-            <p class="mt-1 font-mono text-xs text-mist">o que o usuário vê</p>
-            <p class="mt-3 text-sm leading-relaxed text-mist">O comportamento errado quando o sistema roda, diferente do esperado.</p>
-          </li>
-        </ol>
-
-        <ul class="mt-6 grid gap-3 text-sm md:grid-cols-3">
-          <li class="rounded-lg border border-wire p-4 leading-relaxed text-mist"><strong class="font-semibold text-frost">Nem todo defeito gera falha.</strong> Se o trecho nunca é executado, o defeito fica adormecido.</li>
-          <li class="rounded-lg border border-wire p-4 leading-relaxed text-mist"><strong class="font-semibold text-frost">Nem toda falha vem de defeito.</strong> Ela pode ter causa no ambiente, como um storage mal configurado.</li>
-          <li class="rounded-lg border border-wire p-4 leading-relaxed text-mist"><strong class="font-semibold text-frost">No dia a dia do QA:</strong> o teste observa a falha e registra o defeito na issue com a tag QA New.</li>
-        </ul>
+      <section id="dados-de-teste" class="mt-16" aria-labelledby="titulo-dados-teste">
+        <h3 id="titulo-dados-teste" class="font-display text-2xl font-bold">Dados de Teste</h3>
+        <p class="mt-2 text-mist">Onde os testes são executados e de onde vêm os dados usados neles.</p>
+        <h4 class="mt-8 font-mono text-xs text-scan">Ambientes de teste</h4>
+        <div class="mt-3 grid gap-3 md:grid-cols-2">
+          <div class="rounded-lg border border-wire bg-hull px-5 py-4">
+            <p class="font-display text-lg font-semibold text-frost">FrontOffice</p>
+            <a href="https://stage.conectafapes.leds.dev.br/" class="mt-2 inline-block break-all font-mono text-sm text-scan underline decoration-scan/40 underline-offset-4 hover:decoration-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan" target="_blank" rel="noopener noreferrer">stage.conectafapes.leds.dev.br</a>
           </div>
-        </details>
+          <div class="rounded-lg border border-wire bg-hull px-5 py-4">
+            <p class="font-display text-lg font-semibold text-frost">BackOffice</p>
+            <a href="https://admin.stage.conectafapes.leds.dev.br/" class="mt-2 inline-block break-all font-mono text-sm text-scan underline decoration-scan/40 underline-offset-4 hover:decoration-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan" target="_blank" rel="noopener noreferrer">admin.stage.conectafapes.leds.dev.br</a>
+          </div>
+        </div>
+        <h4 class="mt-8 font-mono text-xs text-scan">Base de dados de teste</h4>
+        <div class="mt-3 grid gap-3 md:grid-cols-2">
+          <div class="rounded-lg border border-wire bg-hull px-5 py-4">
+            <p class="font-display text-lg font-semibold text-frost">Banco do ambiente de Stage</p>
+            <p class="mt-2 text-sm leading-relaxed text-mist">Usa o banco compartilhado do Stage, o mesmo dos ambientes acima.</p>
+          </div>
+          <div class="rounded-lg border border-wire bg-hull px-5 py-4">
+            <p class="font-display text-lg font-semibold text-frost">Local via Docker Desktop</p>
+            <p class="mt-2 text-sm leading-relaxed text-mist">Sobe o banco na própria máquina com o Docker Desktop.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="nomenclatura" class="mt-16" aria-labelledby="titulo-nomenclatura">
+        <h3 id="titulo-nomenclatura" class="font-display text-2xl font-bold">Nomenclatura</h3>
+        <p class="mt-2 text-mist">Termos usados no dia a dia de QA, segundo a terminologia do ISTQB.</p>
+        <div class="mt-6 grid gap-3">
+          <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-3">
+                <span class="font-display text-lg font-semibold text-frost">Erro, Defeito (Bug) e Falha</span>
+                <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Causa e efeito</span>
+              </span>
+              <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <div class="border-t border-wire px-5 py-5">
+              <p class="text-mist">Os três formam uma cadeia: o erro gera o defeito, que gera a falha.</p>
+              <div class="mt-5 flex flex-col gap-3 md:flex-row md:items-stretch">
+                <div class="flex-1 rounded-lg border px-5 py-5" style="border-color:#FFB54799;background:#FFB54712">
+                  <p class="font-mono text-xs" style="color:#FFB547">Causa humana</p>
+                  <p class="mt-1 font-display text-2xl font-semibold text-frost">Erro</p>
+                  <p class="mt-1 font-mono text-xs text-mist">ou engano</p>
+                  <p class="mt-3 text-sm leading-relaxed text-mist">Uma ação humana equivocada de quem desenvolve, analisa ou escreve o requisito.</p>
+                </div>
+                <svg class="h-6 w-6 shrink-0 self-center rotate-90 text-mist md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <div class="flex-1 rounded-lg border px-5 py-5" style="border-color:#00FF9C99;background:#00FF9C12">
+                  <p class="font-mono text-xs" style="color:#00FF9C">No produto</p>
+                  <p class="mt-1 font-display text-2xl font-semibold text-frost">Defeito</p>
+                  <p class="mt-1 font-mono text-xs text-mist">ou bug</p>
+                  <p class="mt-3 text-sm leading-relaxed text-mist">A imperfeição deixada pelo erro no código, no requisito ou no protótipo.</p>
+                </div>
+                <svg class="h-6 w-6 shrink-0 self-center rotate-90 text-mist md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <div class="flex-1 rounded-lg border px-5 py-5" style="border-color:#FF4D6D99;background:#FF4D6D12">
+                  <p class="font-mono text-xs" style="color:#FF4D6D">Na execução</p>
+                  <p class="mt-1 font-display text-2xl font-semibold text-frost">Falha</p>
+                  <p class="mt-1 font-mono text-xs text-mist">o que o usuário vê</p>
+                  <p class="mt-3 text-sm leading-relaxed text-mist">O comportamento errado quando o sistema roda, diferente do esperado.</p>
+                </div>
+              </div>
+              <div class="mt-5 grid gap-3 md:grid-cols-3">
+                <p class="rounded-lg border border-wire px-4 py-4 text-sm leading-relaxed text-mist"><strong class="font-semibold text-frost">Nem todo defeito gera falha.</strong> Se o trecho nunca é executado, o defeito fica adormecido.</p>
+                <p class="rounded-lg border border-wire px-4 py-4 text-sm leading-relaxed text-mist"><strong class="font-semibold text-frost">Nem toda falha vem de defeito.</strong> Ela pode ter causa no ambiente, como um storage mal configurado.</p>
+                <p class="rounded-lg border border-wire px-4 py-4 text-sm leading-relaxed text-mist"><strong class="font-semibold text-frost">No dia a dia do QA:</strong> o teste observa a falha e registra o defeito na issue com a tag QA New.</p>
+              </div>
+            </div>
+          </details>
+        </div>
       </section>
     </section>
 
     <!-- GitHub -->
     <section id="github" data-view="github" hidden class="mx-auto max-w-6xl px-5 py-20" aria-labelledby="titulo-github">
-      <h2 id="titulo-github" class="font-display text-3xl font-bold">GitHub</h2>
-      <p class="mt-2 max-w-2xl text-mist">Issues em teste no GitHub Projects, organizadas por mês e semana.</p>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="titulo-github" class="font-display text-3xl font-bold">GitHub</h2>
+          <p class="mt-2 max-w-2xl text-mist">Issues em teste no GitHub Projects, organizadas por mês e semana.</p>
+        </div>
+      </div>
 
-      <details class="group mt-10 rounded-lg border border-scan/60 bg-hull" open>
-        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-          <span class="flex flex-wrap items-baseline gap-3">
-            <span class="font-display text-2xl font-bold text-scan">Novembro</span>
-            <span class="font-mono text-sm text-mist">2026</span>
-          </span>
-          <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <details id="mes-novembro" class="group/mes mt-10 rounded-lg border border-scan/60 bg-hull">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+          <span class="flex items-baseline gap-3"><span class="font-display text-2xl font-bold text-scan">Novembro</span><span class="font-mono text-sm text-mist">2026</span></span>
+          <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open/mes:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         </summary>
-        <div class="grid gap-3 border-t border-wire p-4 sm:p-5">
-          <details class="group/sem rounded-lg border border-wire bg-abyss" open>
+        <div id="corpo-novembro" class="grid gap-3 border-t border-wire p-5">
+          <details class="group/sem rounded-lg border border-wire bg-abyss open:bg-hull">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-              <span class="flex flex-wrap items-baseline gap-3">
+              <span class="flex flex-wrap items-center gap-3">
                 <span class="font-display text-lg font-semibold text-frost">Semana 1</span>
                 <span class="font-mono text-xs text-mist">1 a 7 de novembro</span>
-                <span class="rounded border border-scan/50 px-2 py-0.5 font-mono text-xs text-scan">6 casos</span>
+                <span class="rounded border border-scan/60 px-2 py-0.5 font-mono text-xs text-scan">5 casos</span>
               </span>
               <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open/sem:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </summary>
-            <div class="border-t border-wire px-5 py-5">
-              <dl class="flex gap-6 font-mono text-sm">
-          <div><dt class="text-mist">Confirmados</dt><dd class="text-2xl text-fail">2</dd></div>
-          <div><dt class="text-mist">Na fila</dt><dd class="text-2xl text-scan">3</dd></div>
-          <div><dt class="text-mist">Bloqueados</dt><dd class="text-2xl text-hold">1</dd></div>
-        </dl>
-              <div class="mt-5 overflow-x-auto rounded-lg border border-wire">
+      <div class="overflow-x-auto border-t border-wire">
         <table class="w-full min-w-[720px] text-left text-sm">
-          <caption class="sr-only">Casos de teste da Onda 1 com módulo, perfil e veredito</caption>
+          <caption class="sr-only">Issues de novembro, semana 1</caption>
           <thead class="bg-hull font-mono text-xs text-mist">
             <tr>
-              <th scope="col" class="px-5 py-3 font-medium">Caso</th>
-              <th scope="col" class="px-5 py-3 font-medium">O que se verifica</th>
-              <th scope="col" class="px-5 py-3 font-medium">Módulo</th>
-              <th scope="col" class="px-5 py-3 font-medium">Perfil</th>
-              <th scope="col" class="px-5 py-3 font-medium">Veredito</th>
+              <th scope="col" class="px-5 py-3 font-medium">Issue</th>
+              <th scope="col" class="px-5 py-3 font-medium">Título</th>
+              <th scope="col" class="px-5 py-3 font-medium">Squad</th>
+              <th scope="col" class="px-5 py-3 font-medium">Tipo</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-wire">
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-691</th>
-              <td class="px-5 py-4">Estorno associado a débito em devolução</td>
-              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
-              <td class="px-5 py-4 text-mist">coordenador</td>
-              <td class="px-5 py-4"><span class="rounded border border-fail/40 bg-fail/10 px-2 py-1 font-mono text-xs text-fail">BUG 2/2</span></td>
+            <tr class="issue-row cursor-pointer hover:bg-panel focus:outline-none focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-scan" data-href="https://github.com/leds-conectafapes/leds-conectafapes-frontoffice-frontend/issues/564" tabindex="0" role="link" aria-label="Abrir issue #564 no GitHub">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">#564</th>
+              <td class="px-5 py-4">Clonar solicitação de bolsa preserva o Orientador</td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs" style="color:#FF7AC6;border-color:rgba(255,122,198,.4);background:rgba(255,122,198,.1)">Pink</span></td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs border-scan/40 bg-scan/10 text-scan">QA</span></td>
             </tr>
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-619</th>
-              <td class="px-5 py-4">Remover nota fiscal de prestação em rascunho</td>
-              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
-              <td class="px-5 py-4 text-mist">coordenador</td>
-              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            <tr class="issue-row cursor-pointer hover:bg-panel focus:outline-none focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-scan" data-href="https://github.com/leds-conectafapes/leds-conectafapes-prestacao-de-contas/issues/681" tabindex="0" role="link" aria-label="Abrir issue #681 no GitHub">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">#681</th>
+              <td class="px-5 py-4">Edição manual no campo de Data de Emissão da Nota Fiscal não persiste após salvar/confirmar</td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs" style="color:#5AB4FF;border-color:rgba(90,180,255,.4);background:rgba(90,180,255,.1)">Blue</span></td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs border-fail/40 bg-fail/10 text-fail">Bug</span></td>
             </tr>
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-597</th>
-              <td class="px-5 py-4">Excluir NF-e anexada na mesma sessão</td>
-              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
-              <td class="px-5 py-4 text-mist">coordenador</td>
-              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            <tr class="issue-row cursor-pointer hover:bg-panel focus:outline-none focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-scan" data-href="https://github.com/leds-conectafapes/leds-conectafapes-prestacao-de-contas/issues/682" tabindex="0" role="link" aria-label="Abrir issue #682 no GitHub">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">#682</th>
+              <td class="px-5 py-4">Edição de descrição de item da Nota Fiscal exibe sucesso mas não persiste após recarregar a página</td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs" style="color:#5AB4FF;border-color:rgba(90,180,255,.4);background:rgba(90,180,255,.1)">Blue</span></td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs border-fail/40 bg-fail/10 text-fail">Bug</span></td>
             </tr>
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-647</th>
-              <td class="px-5 py-4">Abrir arquivo de cotação no Backoffice</td>
-              <td class="px-5 py-4 text-mist">M014 · Backoffice</td>
-              <td class="px-5 py-4 text-mist">analista</td>
-              <td class="px-5 py-4"><span class="rounded border border-scan/40 bg-scan/10 px-2 py-1 font-mono text-xs text-scan">Na fila</span></td>
+            <tr class="issue-row cursor-pointer hover:bg-panel focus:outline-none focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-scan" data-href="https://github.com/leds-conectafapes/leds-conectafapes-prestacao-de-contas/issues/643" tabindex="0" role="link" aria-label="Abrir issue #643 no GitHub">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">#643</th>
+              <td class="px-5 py-4">Ausência de validação de tamanho limite no upload de Nota Fiscal (permite arquivos de 12 MB)</td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs" style="color:#5AB4FF;border-color:rgba(90,180,255,.4);background:rgba(90,180,255,.1)">Blue</span></td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs border-fail/40 bg-fail/10 text-fail">Bug</span></td>
             </tr>
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-730</th>
-              <td class="px-5 py-4">Histórico do bolsista na aba Histórico</td>
-              <td class="px-5 py-4 text-mist">M009 · Frontoffice</td>
-              <td class="px-5 py-4 text-mist">coordenador</td>
-              <td class="px-5 py-4"><span class="rounded border border-fail/40 bg-fail/10 px-2 py-1 font-mono text-xs text-fail">BUG 2/2</span></td>
-            </tr>
-            <tr class="hover:bg-panel">
-              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">CT-STORAGE</th>
-              <td class="px-5 py-4">Anexos de Invoice e Passagem no storage</td>
-              <td class="px-5 py-4 text-mist">M014 · Frontoffice</td>
-              <td class="px-5 py-4 text-mist">coordenador</td>
-              <td class="px-5 py-4"><span class="rounded border border-hold/40 bg-hold/10 px-2 py-1 font-mono text-xs text-hold">NOT_TESTED</span></td>
+            <tr class="issue-row cursor-pointer hover:bg-panel focus:outline-none focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-scan" data-href="https://github.com/leds-conectafapes/leds-conectafapes-prestacao-de-contas/issues/754" tabindex="0" role="link" aria-label="Abrir issue #754 no GitHub">
+              <th scope="row" class="px-5 py-4 font-mono font-medium text-scan">#754</th>
+              <td class="px-5 py-4">Mensagem de erro enganosa ao clicar em "Confirmar edição" da Nota Fiscal sem confirmar o painel "Verificar informações da Nota Fiscal"</td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs" style="color:#5AB4FF;border-color:rgba(90,180,255,.4);background:rgba(90,180,255,.1)">Blue</span></td>
+              <td class="px-5 py-4"><span class="rounded border px-2 py-1 font-mono text-xs border-hold/40 bg-hold/10 text-hold">Melhoria</span></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="mt-4 font-mono text-xs text-mist">Os vereditos acima são dados de exemplo. Substitua pelos resultados da sua rodada.</p>
-            </div>
           </details>
-          <details class="group/sem rounded-lg border border-wire bg-abyss">
+          <details class="group/sem rounded-lg border border-wire bg-abyss open:bg-hull">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-              <span class="flex flex-wrap items-baseline gap-3">
+              <span class="flex flex-wrap items-center gap-3">
                 <span class="font-display text-lg font-semibold text-frost">Semana 2</span>
                 <span class="font-mono text-xs text-mist">8 a 14 de novembro</span>
                 
               </span>
               <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open/sem:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </summary>
-            <div class="border-t border-wire px-5 py-5">
-              <p class="rounded-md border border-dashed border-wire px-4 py-6 text-center text-sm text-mist">Nenhum teste registrado nesta semana ainda.</p>
-            </div>
+            <p class="border-t border-wire px-5 py-4 font-mono text-xs text-mist">Nenhum caso registrado.</p>
           </details>
-          <details class="group/sem rounded-lg border border-wire bg-abyss">
+          <details class="group/sem rounded-lg border border-wire bg-abyss open:bg-hull">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-              <span class="flex flex-wrap items-baseline gap-3">
+              <span class="flex flex-wrap items-center gap-3">
                 <span class="font-display text-lg font-semibold text-frost">Semana 3</span>
                 <span class="font-mono text-xs text-mist">15 a 21 de novembro</span>
                 
               </span>
               <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open/sem:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </summary>
-            <div class="border-t border-wire px-5 py-5">
-              <p class="rounded-md border border-dashed border-wire px-4 py-6 text-center text-sm text-mist">Nenhum teste registrado nesta semana ainda.</p>
-            </div>
+            <p class="border-t border-wire px-5 py-4 font-mono text-xs text-mist">Nenhum caso registrado.</p>
           </details>
-          <details class="group/sem rounded-lg border border-wire bg-abyss">
+          <details class="group/sem rounded-lg border border-wire bg-abyss open:bg-hull">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
-              <span class="flex flex-wrap items-baseline gap-3">
+              <span class="flex flex-wrap items-center gap-3">
                 <span class="font-display text-lg font-semibold text-frost">Semana 4</span>
                 <span class="font-mono text-xs text-mist">22 a 30 de novembro</span>
                 
               </span>
               <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open/sem:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </summary>
-            <div class="border-t border-wire px-5 py-5">
-              <p class="rounded-md border border-dashed border-wire px-4 py-6 text-center text-sm text-mist">Nenhum teste registrado nesta semana ainda.</p>
-            </div>
+            <p class="border-t border-wire px-5 py-4 font-mono text-xs text-mist">Nenhum caso registrado.</p>
           </details>
         </div>
       </details>
+      <script>
+        document.querySelectorAll('.issue-row').forEach(function (tr) {
+          function go() { window.open(tr.dataset.href, '_blank', 'noopener'); }
+          tr.addEventListener('click', go);
+          tr.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
+        });
+      </script>
     </section>
 
     <!-- Tags -->
@@ -687,12 +612,12 @@
         <figure class="mt-10 rounded-lg border border-wire bg-abyss p-6">
           <svg viewBox="0 0 530 590" class="mx-auto block h-auto w-full max-w-xl font-display text-[15px] font-semibold" role="img" aria-labelledby="ciclo-titulo ciclo-desc">
             <title id="ciclo-titulo">Ciclo de vida do bug</title>
-            <desc id="ciclo-desc">New, Assigned, Open, Fixed, Pending Retest, Retest, Verified e Close, em sequência. De Open o defeito pode virar Duplicate, Deferred ou Not a Bug. De Retest pode ir para ReOpened, que volta para Open.</desc>
+            <desc id="ciclo-desc">New, Assigned, Open, Fixed, Pending Retest, Retest, Verified e Close, em sequência. De Open o defeito pode virar Duplicate, Deferred, Not a Bug ou Suggestion. De Retest pode ir para ReOpened, que volta para Open.</desc>
             <defs>
               <marker id="ponta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#7FA592"/></marker>
               <style>.seta { stroke: #7FA592; stroke-width: 1.5; marker-end: url(#ponta); }</style>
             </defs>
-            <rect x="190" y="20" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="47" text-anchor="middle" fill="#D4F7E4">New</text><line x1="265" y1="64" x2="265" y2="90" class="seta"/><rect x="190" y="92" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="119" text-anchor="middle" fill="#D4F7E4">Assigned</text><line x1="265" y1="136" x2="265" y2="162" class="seta"/><rect x="190" y="164" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="191" text-anchor="middle" fill="#D4F7E4">Open</text><line x1="265" y1="208" x2="265" y2="234" class="seta"/><rect x="190" y="236" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="263" text-anchor="middle" fill="#D4F7E4">Fixed</text><line x1="265" y1="280" x2="265" y2="306" class="seta"/><rect x="190" y="308" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="335" text-anchor="middle" fill="#D4F7E4">Pending Retest</text><line x1="265" y1="352" x2="265" y2="378" class="seta"/><rect x="190" y="380" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="407" text-anchor="middle" fill="#D4F7E4">Retest</text><line x1="265" y1="424" x2="265" y2="450" class="seta"/><rect x="190" y="452" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="479" text-anchor="middle" fill="#D4F7E4">Verified</text><line x1="265" y1="496" x2="265" y2="522" class="seta"/><rect x="190" y="524" width="150" height="44" rx="6" fill="rgba(198,255,77,0.10)" stroke="#C6FF4D" stroke-width="1.5"/><text x="265.0" y="551" text-anchor="middle" fill="#C6FF4D">Close</text><line x1="340" y1="186" x2="378" y2="186" class="seta"/><rect x="380" y="150" width="140" height="72" rx="6" fill="rgba(255,181,71,0.10)" stroke="#FFB547" stroke-width="1.5"/><text x="450" y="174" text-anchor="middle" fill="#FFB547">Duplicate</text><text x="450" y="192" text-anchor="middle" fill="#FFB547">Deferred</text><text x="450" y="210" text-anchor="middle" fill="#FFB547">Not a Bug</text><line x1="190" y1="402" x2="142" y2="402" class="seta"/><rect x="10" y="380" width="130" height="44" rx="6" fill="rgba(255,77,109,0.10)" stroke="#FF4D6D" stroke-width="1.5"/><text x="75.0" y="407" text-anchor="middle" fill="#FF4D6D">ReOpened</text><polyline points="75,380 75,186 186,186" fill="none" stroke="#7FA592" stroke-width="1.5" marker-end="url(#ponta)"/>
+            <rect x="190" y="20" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="47" text-anchor="middle" fill="#D4F7E4">New</text><line x1="265" y1="64" x2="265" y2="90" class="seta"/><rect x="190" y="92" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="119" text-anchor="middle" fill="#D4F7E4">Assigned</text><line x1="265" y1="136" x2="265" y2="162" class="seta"/><rect x="190" y="164" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="191" text-anchor="middle" fill="#D4F7E4">Open</text><line x1="265" y1="208" x2="265" y2="234" class="seta"/><rect x="190" y="236" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="263" text-anchor="middle" fill="#D4F7E4">Fixed</text><line x1="265" y1="280" x2="265" y2="306" class="seta"/><rect x="190" y="308" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="335" text-anchor="middle" fill="#D4F7E4">Pending Retest</text><line x1="265" y1="352" x2="265" y2="378" class="seta"/><rect x="190" y="380" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="407" text-anchor="middle" fill="#D4F7E4">Retest</text><line x1="265" y1="424" x2="265" y2="450" class="seta"/><rect x="190" y="452" width="150" height="44" rx="6" fill="rgba(0,255,156,0.08)" stroke="#00FF9C" stroke-width="1.5"/><text x="265.0" y="479" text-anchor="middle" fill="#D4F7E4">Verified</text><line x1="265" y1="496" x2="265" y2="522" class="seta"/><rect x="190" y="524" width="150" height="44" rx="6" fill="rgba(198,255,77,0.10)" stroke="#C6FF4D" stroke-width="1.5"/><text x="265.0" y="551" text-anchor="middle" fill="#C6FF4D">Close</text><line x1="340" y1="186" x2="378" y2="186" class="seta"/><rect x="380" y="141" width="140" height="90" rx="6" fill="rgba(255,181,71,0.10)" stroke="#FFB547" stroke-width="1.5"/><text x="450" y="164" text-anchor="middle" fill="#FFB547">Duplicate</text><text x="450" y="182" text-anchor="middle" fill="#FFB547">Deferred</text><text x="450" y="200" text-anchor="middle" fill="#FFB547">Not a Bug</text><text x="450" y="218" text-anchor="middle" fill="#FFB547">Suggestion</text><line x1="190" y1="402" x2="142" y2="402" class="seta"/><rect x="10" y="380" width="130" height="44" rx="6" fill="rgba(255,77,109,0.10)" stroke="#FF4D6D" stroke-width="1.5"/><text x="75.0" y="407" text-anchor="middle" fill="#FF4D6D">ReOpened</text><polyline points="75,380 75,186 186,186" fill="none" stroke="#7FA592" stroke-width="1.5" marker-end="url(#ponta)"/>
           </svg>
           <figcaption class="mt-4 text-center font-mono text-xs text-mist">Ciclo de vida do bug: de Retest o defeito pode voltar como ReOpened.</figcaption>
         </figure>
@@ -748,6 +673,10 @@
               <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-hold text-hold bg-hold/10">QA Not a Bug</span></dt>
               <dd class="text-sm text-frost">Dev verificou e não era um defeito.</dd>
             </div>
+            <div class="flex flex-col gap-2 bg-abyss px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+              <dt class="sm:w-48 sm:shrink-0"><span class="inline-block rounded border px-2.5 py-1 font-mono text-sm border-hold text-hold bg-hold/10">QA Suggestion</span></dt>
+              <dd class="text-sm text-frost">Sugestão de melhoria.</dd>
+            </div>
           </dl>
         </section>
       </div>
@@ -775,8 +704,8 @@
         <li class="grid gap-3">
           <div class="rounded-lg border border-pass/60 bg-pass/5 p-5">
             <p class="font-mono text-xs text-pass">Tudo certo</p>
-            <h3 class="mt-1 font-display text-xl font-semibold text-frost">Done</h3>
-            <p class="mt-2 text-sm text-mist">A issue vai para a coluna Done.</p>
+            <h3 class="mt-1 font-display text-xl font-semibold text-frost">Homologation in Progress</h3>
+            <p class="mt-2 text-sm text-mist">A issue vai para a coluna de Homologation in Progress. Após o PR, o líder a inclui em Done</p>
           </div>
           <div class="rounded-lg border border-fail/60 bg-fail/5 p-5">
             <p class="font-mono text-xs text-fail">Algo a verificar</p>
