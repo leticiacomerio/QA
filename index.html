@@ -142,7 +142,7 @@
       <p class="mt-2 text-lg text-mist">Quando usar cada teste</p>
 
       <div class="mt-10 grid gap-3">
-        <details class="group rounded-lg border border-scan/60 bg-hull open:bg-panel" open>
+        <details class="group rounded-lg border border-scan/60 bg-hull open:bg-panel">
           <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
             <span class="flex flex-wrap items-center gap-3">
               <span class="font-display text-lg font-semibold text-scan">Teste de Caixa Branca</span>
@@ -166,6 +166,66 @@
           <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
             <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Testa o sistema pelo lado de fora, como um usuário, sem olhar o código. Quem testa só conhece as entradas e as saídas esperadas, definidas nos requisitos e na documentação, e verifica se o resultado na tela corresponde ao que foi pedido.</p></div>
             <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Na homologação de entregas, na validação de requisitos e critérios de aceite, e em testes de sistema e aceitação. É o tipo mais usado no fluxo de QA do Conecta.</p></div>
+          </div>
+        </details>
+      </div>
+
+      <h3 class="mt-12 font-display text-xl font-semibold">Automação</h3>
+      <p class="mt-1 text-sm text-mist">Ferramentas que repetem os testes sozinhas e garantem a qualidade a cada entrega.</p>
+      <div class="mt-5 grid gap-3">
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Cypress</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">E2E e componente</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Automatiza testes de ponta a ponta e de componentes rodando direto no navegador, com recarga ao vivo, viagem no tempo entre os passos e espera automática pelos elementos.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Para fluxos do Frontoffice e do Backoffice que precisam ser repetidos a cada entrega, e para depurar visualmente por que um teste de interface falhou.</p></div>
+            <p class="text-sm text-mist md:col-span-2"><span class="font-mono text-xs text-scan">Documentação Oficial:</span> <a href="https://docs.cypress.io/app/core-concepts/writing-and-organizing-tests" target="_blank" rel="noopener noreferrer" class="break-all font-mono text-xs text-scan underline decoration-scan/40 underline-offset-4 hover:decoration-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">https://docs.cypress.io/app/core-concepts/writing-and-organizing-tests</a></p>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Playwright</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">E2E e API</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Automatiza navegadores Chromium, Firefox e WebKit com TypeScript, testa endpoints da API e gera trace, vídeo e screenshot de cada falha.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Para regressão dos fluxos críticos em vários navegadores e para testar status, corpo e permissões por perfil direto na API.</p></div>
+            <p class="text-sm text-mist md:col-span-2"><span class="font-mono text-xs text-scan">Documentação Oficial:</span> <a href="https://playwright.dev/docs/intro" target="_blank" rel="noopener noreferrer" class="break-all font-mono text-xs text-scan underline decoration-scan/40 underline-offset-4 hover:decoration-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">https://playwright.dev/docs/intro</a></p>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">Pipeline de CI/CD</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">GitHub Actions</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Roda lint, testes e análise de código automaticamente a cada push ou pull request, e bloqueia o merge quando algo quebra.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Em todo PR: os testes automatizados viram um portão de qualidade antes da homologação, e os relatórios e evidências ficam anexados ao run.</p></div>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-wire bg-hull open:bg-panel">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-scan [&::-webkit-details-marker]:hidden">
+            <span class="flex flex-wrap items-center gap-3">
+              <span class="font-display text-lg font-semibold text-frost">SonarQube</span>
+              <span class="rounded border border-wire px-2 py-0.5 font-mono text-xs text-mist">Análise estática</span>
+            </span>
+            <svg class="h-5 w-5 shrink-0 text-mist transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="grid gap-4 border-t border-wire px-5 py-5 md:grid-cols-2">
+            <div><h4 class="font-mono text-xs text-scan">O que faz</h4><p class="mt-2 leading-relaxed text-frost">Analisa o código em busca de bugs, vulnerabilidades, code smells, duplicação e cobertura de testes, com um Quality Gate de aprovação ou reprovação.</p></div>
+            <div><h4 class="font-mono text-xs text-scan">Quando usar</h4><p class="mt-2 leading-relaxed text-mist">Integrado ao pipeline, para barrar PRs que não atingem a cobertura mínima ou que introduzem problemas novos de segurança ou manutenção.</p></div>
+            <p class="text-sm text-mist md:col-span-2"><span class="font-mono text-xs text-scan">Documentação Oficial:</span> <a href="https://docs.sonarsource.com/" target="_blank" rel="noopener noreferrer" class="break-all font-mono text-xs text-scan underline decoration-scan/40 underline-offset-4 hover:decoration-scan focus:outline-none focus-visible:ring-2 focus-visible:ring-scan">https://docs.sonarsource.com/</a></p>
           </div>
         </details>
       </div>
@@ -1599,6 +1659,9 @@
           if (a.getAttribute('data-nav') === active) a.setAttribute('aria-current', 'page');
           else a.removeAttribute('aria-current');
         });
+        if (active === 'testes') {
+          document.querySelectorAll('#testes details[open]').forEach(function (d) { d.open = false; });
+        }
         window.scrollTo(0, 0);
         if (active !== 'inicio') {
           var heading = document.getElementById('titulo-' + active);
